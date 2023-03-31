@@ -1,14 +1,28 @@
+//   _   _ _ _     ___  _____ _ _
+//  | \ | (_) | __/ _ \|  ___| (_)_  __
+//  |  \| | | |/ / | | | |_  | | \ \/ /
+//  | |\  | |   <| |_| |  _| | | |>  <
+//  |_| \_|_|_|\_\\___/|_|   |_|_/_/\_\
+
 // Exemple adapté de la mise en route d'Express :
 // http://expressjs.com/fr/starter/hello-world.html
 
+
+
+// ************************************************************
+
+
+//   ___                            _      ___     ____                  _
+//  |_ _|_ __ ___  _ __   ___  _ __| |_   ( _ )   |  _ \ ___  __ _ _   _(_)_ __ ___
+//   | || '_ ` _ \| '_ \ / _ \| '__| __|  / _ \/\ | |_) / _ \/ _` | | | | | '__/ _ \
+//   | || | | | | | |_) | (_) | |  | |_  | (_>  < |  _ <  __/ (_| | |_| | | | |  __/
+//  |___|_| |_| |_| .__/ \___/|_|   \__|  \___/\/ |_| \_\___|\__, |\__,_|_|_|  \___|
+//                |_|                                           |_|
 const express = require('express');
 const figlet = require('figlet');
 const helmet = require('helmet');
-
-var auth = require('basic-auth');
-
+const auth = require('basic-auth');
 const path = require('path');
-
 const { promisify } = require('util');
 const { resolve } = require('path');
 const fs = require('fs');
@@ -16,40 +30,65 @@ const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
 const fetch = require('node-fetch');
 require('dotenv').config();
+const MatomoTracker = require('matomo-tracker');
 
-var MatomoTracker = require('matomo-tracker');
 
+// ************************************************************
+
+//  __     __         _       _     _
+//  \ \   / /_ _ _ __(_) __ _| |__ | | ___  ___
+//   \ \ / / _` | '__| |/ _` | '_ \| |/ _ \/ __|
+//    \ V / (_| | |  | | (_| | |_) | |  __/\__ \
+//     \_/ \__,_|_|  |_|\__,_|_.__/|_|\___||___/
 // Initialize with your site ID and Matomo URL
-var matomo = new MatomoTracker(11, 'https://stats.liliwol.fr/piwik.php');
+const matomo = new MatomoTracker(11, 'https://stats.liliwol.fr/piwik.php');
 
-
-const app = express();
-app.use(require('express-status-monitor')());
-
-const STREAM_DIR = "/var/www/str3aming/";
-
+// Dossier qui contient les films à afficher
+//const STREAM_DIR = "/var/www/str3aming/";
+const STREAM_DIR = __dirname + "/MOVIES_AND_SERIES/";
 const genres = [];
 
+
+
+// ************************************************************
+
+
+//   _   _           _          _ ____    _____
+//  | \ | | ___   __| | ___    | / ___|  | ____|_  ___ __  _ __ ___  ___ ___
+//  |  \| |/ _ \ / _` |/ _ \_  | \___ \  |  _| \ \/ / '_ \| '__/ _ \/ __/ __|
+//  | |\  | (_) | (_| |  __/ |_| |___) | | |___ >  <| |_) | | |  __/\__ \__ \
+//  |_| \_|\___/ \__,_|\___|\___/|____/  |_____/_/\_\ .__/|_|  \___||___/___/
+//                                                  |_|
+const app = express();
+app.use(require('express-status-monitor')());
 // Définition du moteur de template
 app.set('view engine', 'ejs');
 app.locals.inspect = require('util').inspect;
-
 // Définition du répertoire public
 app.use(express.static(__dirname + '/public'));
-
 // Sécurité
-app.use(helmet());
-
 //User validation
 //https://github.com/jshttp/basic-auth
+app.use(helmet());
 
+
+
+// ************************************************************
+
+
+
+//   ____             _
+//  |  _ \ ___  _   _| |_ ___  ___
+//  | |_) / _ \| | | | __/ _ \/ __|
+//  |  _ < (_) | |_| | ||  __/\__ \
+//  |_| \_\___/ \__,_|\__\___||___/
 
 /**
- * ROUTE /
+ * Route / en GET
  */
 app.get('/', async function (req, res)
 {
-  var user = auth(req);
+  const user = auth(req);
 
   // Track dans Matomo
   matomo.track({
@@ -85,11 +124,11 @@ app.get('/', async function (req, res)
 
 
 /**
- * ROUTE /search
+ * Route /search en GET
  */
 app.get('/search', async function (req, res)
 {
-  var user = auth(req);
+  const user = auth(req);
 
   // Check credentials
   if (!user || !check( user.name, user.pass ))
@@ -101,13 +140,12 @@ app.get('/search', async function (req, res)
 
     res.render("search.ejs", {
     });
-
   }
 });
 
 
 /**
- * ROUTE /add
+ * Route /add en GET
  */
 app.get('/add', async function (req, res)
 {
@@ -117,12 +155,19 @@ app.get('/add', async function (req, res)
 }
 );
 
-/**
- * Lancement serveur
- */
+
+// ************************************************************
+
+
+
+//   _                                              _         _
+//  | |    __ _ _ __   ___ ___ _ __ ___   ___ _ __ | |_    __| |_   _   ___  ___ _ ____   _____ _   _ _ __
+//  | |   / _` | '_ \ / __/ _ \ '_ ` _ \ / _ \ '_ \| __|  / _` | | | | / __|/ _ \ '__\ \ / / _ \ | | | '__|
+//  | |__| (_| | | | | (_|  __/ | | | | |  __/ | | | |_  | (_| | |_| | \__ \  __/ |   \ V /  __/ |_| | |
+//  |_____\__,_|_| |_|\___\___|_| |_| |_|\___|_| |_|\__|  \__,_|\__,_| |___/\___|_|    \_/ \___|\__,_|_|
 app.listen(4000, function ()
 {
-  figlet('NIKOFLIX', function(err, data) {
+  figlet('NikOFliX', function(err, data) {
     if (err) {
         console.log('Something went wrong...');
         console.dir(err);
@@ -135,14 +180,25 @@ app.listen(4000, function ()
 });
 
 
-// SECURITE
-// Basic function to validate credentials for example
+
+//   ____    _____    ____   _   _   ____    ___   _____   _____
+//  / ___|  | ____|  / ___| | | | | |  _ \  |_ _| |_   _| | ____|
+//  \___ \  |  _|   | |     | | | | | |_) |  | |    | |   |  _|
+//   ___) | | |___  | |___  | |_| | |  _ <   | |    | |   | |___
+//  |____/  |_____|  \____|  \___/  |_| \_\ |___|   |_|   |_____|
+
+/**
+ * Fonction pour valider l'authentification via HTTP Basic
+ *
+ * @param name
+ * @param pass
+ * @returns {boolean}
+ */
 function check (name, pass) {
   var valid = true
 
   // Simple method to prevent short-circut and use timing-safe compare
-  valid = ((name == 'nicoflix' || name == 'NellY') && valid) ? true: false;
-  valid = ((pass == 'n1c0fl1X' || pass == 'Y11eN') && valid) ? true : false;
+  //valid = ((name == 'nicoflix' || name == 'NellY') && valid) ? true: false;
 
   return valid
 }

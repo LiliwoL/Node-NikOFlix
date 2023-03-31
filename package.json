@@ -4,6 +4,7 @@
   "description": "Streaming with Node",
   "main": "streaming.js",
   "dependencies": {
+    "basic-auth": "^2.0.1",
     "dotenv": "^16.0.3",
     "ejs": "^2.7.4",
     "express": "^4.17.1",
