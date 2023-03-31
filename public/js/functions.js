@@ -1,12 +1,18 @@
 const playlistIntro = "#EXTM3U"
 
+/**
+ * Modifie le contenu du fichier M3U
+ * @param url
+ * @param titre
+ */
 function updatePlaylistContent ( url, titre )
 {
-  var playlistTextarea = document.getElementById('playlistSource');
+  const playlistTextarea = document.getElementById('playlistSource');
+  const url_base = document.getElementById("url_base").textContent;
   
-  let URL_THUMBNAIL = "http://37.187.0.107:4000/img/logo.png"
-  let TITLE = titre
-  let URL_VIDEO = url
+  let URL_THUMBNAIL = url_base + ":4000/img/logo.png";
+  let TITLE = titre;
+  let URL_VIDEO = url;
 
   let playlistEntryTemplate = '#EXTINF:0 tvg-logo="' + URL_THUMBNAIL + '", ' + TITLE + '\n' + URL_VIDEO
 
@@ -40,8 +46,8 @@ function download(filename, text) {
 // Start file download.
 function downloadPlaylist(){
   // Generate download of hello.txt file with some content
-  var text = document.getElementById("playlistSource").value;
-  var filename = "nikoFlix.m3u";
+  const text = document.getElementById("playlistSource").value;
+  const filename = "NikOFliX.m3u";
   
   download(filename, text);
 }
@@ -50,11 +56,11 @@ function downloadPlaylist(){
 // Gestion des boutons de films
 const movieBtnHandler = function(e) 
 {
-  var url = e.target.getAttribute("data-url");
-  var title = e.target.getAttribute("data-title");
+  const url = e.target.getAttribute("data-url");
+  const title = e.target.getAttribute("data-title");
 
   // Fonction de filtre
-  updatePlaylistContent( url, title);
+  updatePlaylistContent( url, title );
 }
 
 var movieButtons = document.getElementsByClassName('movieBtn');

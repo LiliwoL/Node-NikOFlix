@@ -41,12 +41,14 @@ const MatomoTracker = require('matomo-tracker');
 //    \ V / (_| | |  | | (_| | |_) | |  __/\__ \
 //     \_/ \__,_|_|  |_|\__,_|_.__/|_|\___||___/
 // Initialize with your site ID and Matomo URL
-const matomo = new MatomoTracker(11, 'https://stats.liliwol.fr/piwik.php');
+const matomo = new MatomoTracker(11, 'https://stats.fr/piwik.php');
 
 // Dossier qui contient les films à afficher
 //const STREAM_DIR = "/var/www/str3aming/";
 const STREAM_DIR = __dirname + "/MOVIES_AND_SERIES/";
 const genres = [];
+const URL_BASE = "http://127.0.0.1";
+const CURRENT_DIR = __dirname;
 
 
 
@@ -90,18 +92,11 @@ app.get('/', async function (req, res)
 {
   const user = auth(req);
 
-  // Track dans Matomo
-  matomo.track({
-      url: 'http://nikoflix.istanbulles.fr',
-      action_name: 'NikoFlix HomePage'
-    }
-  );
-
   // Check credentials
   if (!user || !check( user.name, user.pass ))
   {
     res.statusCode = 401
-    res.setHeader('WWW-Authenticate', 'Basic realm="NikoFlix - Streaming sans virus"')
+    res.setHeader('WWW-Authenticate', 'Basic realm="NikOFlix - Streaming sans virus"')
     res.end('Access denied')
   } else {
     getStreamDirectory( STREAM_DIR )
@@ -110,11 +105,13 @@ app.get('/', async function (req, res)
         //console.log(genres)
 
         // Clean Genres Array
-        cleanGenres = splitGenreArray();
+        let cleanGenres = splitGenreArray();
 
         res.render("list.ejs", {
           data: files,
-          genres: cleanGenres
+          genres: cleanGenres,
+          url_base: URL_BASE,
+          current_dir: CURRENT_DIR
         });
       }
     )
@@ -203,9 +200,14 @@ function check (name, pass) {
   return valid
 }
 
-// https://stackoverflow.com/questions/5827612/node-js-fs-readdir-recursive-directory-search
+/**
+ * PArcours du dossier contenant les films
+ * @param directory
+ * @returns {Promise<Awaited<unknown>[]>}
+ */
 async function getStreamDirectory( directory )
 {
+  // https://stackoverflow.com/questions/5827612/node-js-fs-readdir-recursive-directory-search
   const extension = [ ".mkv", ".avi" ];
 
   const subdirs = await readdir(directory);
@@ -272,6 +274,12 @@ async function getStreamDirectory( directory )
   return cleanFiles;
 }
 
+/**
+ * A partir du nom du fichier (IMDB_ID), on récupère le film via l'API de OMDB
+ *
+ * @param res
+ * @returns {Promise<*>}
+ */
 async function getMovieInfoByTitle ( res )
 {
   // Titre issu du fichier
@@ -297,6 +305,12 @@ async function getMovieInfoByTitle ( res )
   return await datas;
 }
 
+/**
+ * A partir du nom du fichier (IMDB_ID), on récupère le film via l'API de OMDB
+ *
+ * @param res
+ * @returns {Promise<*>}
+ */
 async function getMovieInfoById ( res )
 {
   // Titre issu du fichier
@@ -318,6 +332,7 @@ async function getMovieInfoById ( res )
 
   return await datas;
 }
+
 
 function sortAlphabeticallyMovies(a, b){
   if(a[0].title < b[0].title) { return -1; }
