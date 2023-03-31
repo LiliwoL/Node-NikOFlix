@@ -15,6 +15,7 @@ const fs = require('fs');
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
 const fetch = require('node-fetch');
+require('dotenv').config();
 
 var MatomoTracker = require('matomo-tracker');
 
@@ -129,7 +130,7 @@ app.listen(4000, function ()
     }
     console.log(data);
 
-    console.log("Application Stremaing écoutant sur le port 4000!");
+    console.log("Application Streaming écoutant sur le port 4000!");
   });
 });
 
@@ -222,9 +223,11 @@ async function getMovieInfoByTitle ( res )
   // Recréation du vrai titre en explosant le titre condensé
   let title = condensedTitle.replace(/([A-Z])/g, ' $1').trim();
 
+  const API_KEY_OMDB = process.env.API_KEY_OMDB;
+
   // Requete HTTP
   let response = await fetch(
-      'http://www.omdbapi.com/?apikey=185a318e&t=' + title
+      'http://www.omdbapi.com/?apikey=' + API_KEY_OMDB + '&t=' + title
       ,
       {
           mode: 'no-cors', // no-cors, *cors, same
@@ -243,9 +246,11 @@ async function getMovieInfoById ( res )
   // Titre issu du fichier
   let imdbID = path.parse(res).name;
 
+  const API_KEY_OMDB = process.env.API_KEY_OMDB;
+
   // Requete HTTP
   let response = await fetch(
-      'http://www.omdbapi.com/?apikey=185a318e&i=' + imdbID
+      'http://www.omdbapi.com/?apikey=' + API_KEY_OMDB + '&i=' + imdbID
       ,
       {
           mode: 'no-cors', // no-cors, *cors, same
