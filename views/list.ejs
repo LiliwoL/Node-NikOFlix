@@ -194,9 +194,11 @@
 
       <div class="row">        
         <% for (var i = 0; i < data.length; i++) {%>
-          <% var urlVideo = url_base + "/str3aming/" + data[i][0].file.replace( current_dir, ""); %>
+
+          <% let urlVideo = url_base_files + "/str3aming/" + data[i][0].file.replace( current_dir, ""); %>
 
           <div class="card zoom" style="width: 10rem;" data-title='<%= data[i][0].title %>'>
+
             <% if (data[i][0].omdb.Poster && (data[i][0].omdb.Poster != "N/A")) { %>
               <img class="card-img-top img-fluid" src='<%= data[i][0].omdb.Poster %>' alt="<%= data[i][0].omdb.Title; %>">
             <% }else{ %>

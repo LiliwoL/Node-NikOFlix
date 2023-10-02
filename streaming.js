@@ -18,21 +18,20 @@
 //   | || | | | | | |_) | (_) | |  | |_  | (_>  < |  _ <  __/ (_| | |_| | | | |  __/
 //  |___|_| |_| |_| .__/ \___/|_|   \__|  \___/\/ |_| \_\___|\__, |\__,_|_|_|  \___|
 //                |_|                                           |_|
-const express = require('express');
-const figlet = require('figlet');
-const helmet = require('helmet');
-const auth = require('basic-auth');
-const path = require('path');
-const { promisify } = require('util');
-const { resolve } = require('path');
-const fs = require('fs');
-const readdir = promisify(fs.readdir);
-const stat = promisify(fs.stat);
-const fetch = require('node-fetch');
+const express           = require('express');
+const figlet            = require('figlet');
+const helmet            = require('helmet');
+const auth              = require('basic-auth');
+const path              = require('path');
+const { promisify }     = require('util');
+const { resolve }       = require('path');
+const fs                = require('fs');
+const readdir           = promisify(fs.readdir);
+const stat              = promisify(fs.stat);
+const fetch             = require('node-fetch');
 require('dotenv').config();
-const MatomoTracker = require('matomo-tracker');
-const ip = require("ip");
-
+const MatomoTracker     = require('matomo-tracker');
+const ip                = require("ip");
 
 // ************************************************************
 
@@ -42,16 +41,16 @@ const ip = require("ip");
 //    \ V / (_| | |  | | (_| | |_) | |  __/\__ \
 //     \_/ \__,_|_|  |_|\__,_|_.__/|_|\___||___/
 // Initialize with your site ID and Matomo URL
-const matomo = new MatomoTracker(11, 'https://stats.fr/piwik.php');
+const matomo            = new MatomoTracker(11, 'https://stats.fr/piwik.php');
 
 // Dossier qui contient les films à afficher
 //const STREAM_DIR = "/var/www/str3aming/";
-const STREAM_DIR = __dirname + "/MOVIES_AND_SERIES/";
-const genres = [];
-const URL_BASE = "http://127.0.0.1";
-const CURRENT_DIR = __dirname;
+const STREAM_DIR        = __dirname + "/MOVIES_AND_SERIES/";
+const genres            = [];
 
-
+const URL_BASE          = "http://" + ip.address();
+const URL_BASE_FILES    = "http://" + ip.address();
+const CURRENT_DIR       = __dirname;
 
 // ************************************************************
 
@@ -64,11 +63,14 @@ const CURRENT_DIR = __dirname;
 //                                                  |_|
 const app = express();
 app.use(require('express-status-monitor')());
+
 // Définition du moteur de template
 app.set('view engine', 'ejs');
 app.locals.inspect = require('util').inspect;
+
 // Définition du répertoire public
 app.use(express.static(__dirname + '/public'));
+
 // Sécurité
 //User validation
 //https://github.com/jshttp/basic-auth
@@ -112,6 +114,7 @@ app.get('/', async function (req, res)
           data: files,
           genres: cleanGenres,
           url_base: URL_BASE,
+          url_base_files: URL_BASE_FILES,
           current_dir: CURRENT_DIR
         });
       }
@@ -175,10 +178,7 @@ app.listen(4000, function ()
 
     console.log("Application Streaming écoutant sur le port 4000!");
 
-    // Récupération IP
-    let ip = require("ip");
-
-    console.log("http://" + ip.address() + ":4000");
+    console.log(URL_BASE + ":4000");
   });
 });
 

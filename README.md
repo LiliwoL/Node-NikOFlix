@@ -43,3 +43,7 @@ Pour lancer une version **monitorée**, ie qui se recharge à chaque modificatio
 ```bash
 nodemon
 ```
+
+# Parcours du dossier
+
+Le script va parcourir le dossier **MOVIES_AND_SERIES** à la recherche de fichiers .avi ou .mkv.
