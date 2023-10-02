@@ -31,6 +31,7 @@ const stat = promisify(fs.stat);
 const fetch = require('node-fetch');
 require('dotenv').config();
 const MatomoTracker = require('matomo-tracker');
+const ip = require("ip");
 
 
 // ************************************************************
@@ -173,6 +174,11 @@ app.listen(4000, function ()
     console.log(data);
 
     console.log("Application Streaming écoutant sur le port 4000!");
+
+    // Récupération IP
+    let ip = require("ip");
+
+    console.log("http://" + ip.address() + ":4000");
   });
 });
 

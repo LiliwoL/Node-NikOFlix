@@ -19,7 +19,10 @@ yarn install
 # Configuration
 
 NikOFliX fait appel à des API pour les affiches et les titres des films.
-Vous devez saisir vos clés API dans le fichier **.env**
+Vous devez saisir vos clés API dans le fichier **.env** (recopiez le contenu du fichier **.env.sample**)
+
+- https://www.omdbapi.com
+- https://www.themobiedb.org
 
 ```dotenv
 # API KEY TheMovieDatabase
